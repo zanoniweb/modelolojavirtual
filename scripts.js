@@ -1,3 +1,6 @@
+//COMEÇO DA CODIFICAÇÃO DA RELAÇÃO DE PRODUTOS
+
+
 const produtos = [
     { id: 1, nome: 'Produto A', preco: 50.0, imagem: 'url_produto_a.jpg'},
     { id: 2, nome: 'Produto B', preco: 30.0, imagem: 'url_produto_b.jpg'},
@@ -17,11 +20,17 @@ const produtos = [
   
   let carrinho = [];
   let usuarioLogado = null;
+
+//FINAL DA CODIFICAÇÃO DA RELAÇÃO DE PRODUTOS
+
+//COMEÇO DA CODIFICAÇÃO DO RELACIONAMENTO DE PÁGINAS
   
   document.getElementById('link-historia').addEventListener('click', exibirHistoria);
   document.getElementById('link-cadastro').addEventListener('click', exibirCadastro);
   document.getElementById('link-login').addEventListener('click', exibirLogin);
   document.getElementById('link-loja').addEventListener('click', exibirLoja);
+ 
+//FINAL DA CODIFICAÇÃO DO RELACIONAMENTO DE PÁGINAS
 
   function exibirHistoria() {
     const conteudo = document.getElementById('conteudo');
@@ -31,6 +40,8 @@ const produtos = [
     `;
   }
   
+//COMEÇO DA CODIFICAÇÃO DO CADASTRO DE USUÁRIO
+
   function exibirCadastro() {
     const conteudo = document.getElementById('conteudo');
     conteudo.innerHTML = `
@@ -45,7 +56,19 @@ const produtos = [
     `;
     document.getElementById('form-cadastro').addEventListener('submit', cadastrarUsuario);
   }
-  
+
+   function cadastrarUsuario(event) {
+    event.preventDefault();
+    const usuario = document.getElementById('cadastro-usuario').value;
+    const senha = document.getElementById('cadastro-senha').value;
+    localStorage.setItem(usuario, senha);
+    alert('Usuário cadastrado com sucesso!');
+  }
+
+//FINAL DA CODIFICAÇÃO DO CADASTRO DE USUÁRIO
+
+//COMEÇO DA CODIFICAÇÃO DO LOGAMENTO DO USUÁRIO
+
   function exibirLogin() {
     const conteudo = document.getElementById('conteudo');
     conteudo.innerHTML = `
@@ -60,6 +83,23 @@ const produtos = [
     `;
     document.getElementById('form-login').addEventListener('submit', logarUsuario);
   }
+  
+  function logarUsuario(event) {
+    event.preventDefault();
+    const usuario = document.getElementById('login-usuario').value;
+    const senha = document.getElementById('login-senha').value;
+    const senhaSalva = localStorage.getItem(usuario);
+  
+    if (senha === senhaSalva) {
+      alert('Login realizado com sucesso!');
+      usuarioLogado = usuario;
+      exibirLoja();
+    } else {
+      alert('Usuário ou senha inválidos!');
+    }
+  }
+
+  //FINAL DA CODIFICAÇÃO DO LOGAMENTO DO USUÁRIO
   
   function exibirLoja() {
     if (!usuarioLogado) {
@@ -82,7 +122,6 @@ const produtos = [
   </div>
   <div style="text-align: center; margin-top: 20px;">
     <button onclick="exibirCarrinho()">Ver Carrinho</button>
-    <button onclick="exibirLoja()">Loja</button>
   </div>
 `;
   }
@@ -126,35 +165,24 @@ const produtos = [
       <label>Cidade:</label> <input type="text" id="cidade"><br>
       <label>CEP:</label> <input type="text" id="cep"><br>
       <h3>Formas de Pagamento</h3>
-      <p>PIX: 000.000.000-00</p>
-      <p>Transferência: Banco ?????, Agência ????, Conta ?????-?</p>
+<div>
+  <label for="pix">
+    <input type="checkbox" id="pix" name="payment-method" value="pix">
+    <p>PIX: 000.000.000-00</p>
+  </label>
+  
+  <label for="transfer">
+    <input type="checkbox" id="transfer" name="payment-method" value="transfer">
+    <p>Transferência: Banco ?????, Agência ????, Conta ?????-?</p>
+  </label>
+</div>
       <button onclick="salvarPDF()">Salvar em PDF</button>
       <button onclick="finalizarCompra()">Finalizar Compra</button>
     `;
   }
   
-  function cadastrarUsuario(event) {
-    event.preventDefault();
-    const usuario = document.getElementById('cadastro-usuario').value;
-    const senha = document.getElementById('cadastro-senha').value;
-    localStorage.setItem(usuario, senha);
-    alert('Usuário cadastrado com sucesso!');
-  }
-  
-  function logarUsuario(event) {
-    event.preventDefault();
-    const usuario = document.getElementById('login-usuario').value;
-    const senha = document.getElementById('login-senha').value;
-    const senhaSalva = localStorage.getItem(usuario);
-  
-    if (senha === senhaSalva) {
-      alert('Login realizado com sucesso!');
-      usuarioLogado = usuario;
-      exibirLoja();
-    } else {
-      alert('Usuário ou senha inválidos!');
-    }
-  }
+ 
+//COMEÇO DA CODIFICAÇÃO DO CARRINHO
   
   function adicionarAoCarrinho(produtoId) {
     const produto = produtos.find(p => p.id === produtoId);
@@ -177,6 +205,11 @@ const produtos = [
     }
     exibirCarrinho();
   }
+
+  //FINAL DA CODIFICAÇÃO DO CARRINHO
+
+
+  //COMEÇO DA CODIFICAÇÃO DA SALVA DO CARRINHO
   
   async function salvarPDF() {
     if (carrinho.length === 0) {
@@ -217,6 +250,14 @@ const produtos = [
     const total = carrinho.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
     doc.text(`Total: R$ ${total.toFixed(2)}`, 10, y + 10);
   
+ // FORMA DE PAGAMENTO ESCOLHIDA --- ESTÁ COM DEFEITO E A BELINHA QUER BRINCAR CONTINUAR AQUI MAIS TARDE URGENTE ESTÁ CAGADO O CÓDIGO FALHA!!!
+ const pixCheckbox = document.getElementById('pix');
+ const transferCheckbox = document.getElementById('transfer');
+ // Elemento para exibir a forma de pagamento escolhida
+ const selectedMethodElement = document.getElementById('selected-method');
+ // FINAL DA FORMA DE PAGAMENTO ESCOLHIDA
+
+
     // Salve o PDF
     doc.save('detalhes_compra.pdf');
   }
@@ -227,3 +268,98 @@ const produtos = [
     exibirLoja();
   }
   
+//FINAL DA CODIFICAÇÃO DA SALVA DO CARRINHO
+
+
+
+//COMEÇO DA CODIFICAÇÃO DAS FUNÇÕES DO CHAT
+const questionsAndAnswers = [
+  { question: "Qual é o horário de funcionamento?", answer: "Nosso horário é das 8:30h às 11:30 e das 13:00 até as 18:00h, de segunda a sexta-feira." },
+  { question: "Vocês abrem aos finais de semana?", answer: "Sim, estamos abertos aos sábados das 9h às 12h." },
+  { question: "Como posso entrar em contato?", answer: "Você pode entrar em contato pelo telefone (43) 9999-44331 (Wats)." },
+  { question: "Vocês oferecem entrega?", answer: "Sim, temos opções de entrega para sua comodidade." },
+  { question: "Qual é o endereço da loja?", answer: "Atualmente não temos loja física apenas um ambiente de produção dos produtos artesanais." },
+  { question: "Vocês possuem estacionamento?", answer: "Não, temos estacionamento nesse momento." },
+  { question: "Quais são as formas de pagamento aceitas?", answer: "Aceitamos PIX ou transferência bancária." },
+  { question: "Vocês oferecem descontos?", answer: "Sim, confira nossas promoções no site ou na loja quando forem divulgadas." },
+  { question: "Vocês emitem nota fiscal?", answer: "Sim, emitimos nota fiscal." },
+  { question: "Há garantia nos produtos?", answer: "Sim, oferecemos garantia conforme o fabricante." },
+  { question: "Vocês têm produtos em promoção?", answer: "Sim, temos uma seção de promoções no site e na loja." },
+  { question: "Vocês aceitam encomendas especiais?", answer: "Sim, trabalhamos com encomendas personalizadas." },
+  { question: "Há atendimento online?", answer: "Sim, oferecemos suporte online via e-mail. lojapipocasdavalquria@gamil.com" },
+  { question: "Qual é o prazo de entrega?", answer: "Como realizamos entregas na região de Londrina/Pr e em cidades de sua região metropolitana que são Cambé e Ibiporã a entrega pode ser agendada para o dia e o horário que o cliente combinar para sua festa." },
+  { question: "Vocês fazem atendimentos diretamente nos eventos?", answer: "Sim, temos uma equipe especializada para atuar dentro de eventos." },
+  { question: "Posso reservar produtos?", answer: "Sim, reservas podem ser feitas pelo nosso Wats (43) 9999-44331 ou pelo nosso e-mail comercercial lojapipocasdavalquria@gamil.com." },
+  { question: "Vocês trabalham com produtos em estoque?", answer: "Não, produzimos de forma artesansal especificamente para sua demanda e de fuma forma persoanlizada." },
+  { question: "Vocês têm atendimento para empresas?", answer: "Sim, já prestamos serviços para empresas em eventos." },
+  { question: "Há algum programa de fidelidade?", answer: "Sim, para os nossos clientes fidelizados temos vantagens." },
+  { question: "Posso cancelar um pedido?", answer: "Sim, mas existe um prazo de 24 horas para que isso seja realizado antes que a produção artesanal de sua encomenda comece a ser produzida." },
+];
+
+document.getElementById('start-chat-btn').addEventListener('click', function () {
+  document.getElementById('chat-box').classList.remove('hidden');
+  document.getElementById('chat-box').style.display = 'flex'; // Mostra o chat-box
+  document.getElementById('start-chat-btn').classList.add('hidden'); // Esconde o botão
+  document.getElementById('welcome-message').classList.remove('hidden');
+  loadQuestions();
+});
+
+document.getElementById('close-chat-btn').addEventListener('click', function () {
+  document.getElementById('chat-box').classList.add('hidden');
+  document.getElementById('chat-box').style.display = 'none'; // Esconde o chat-box
+  document.getElementById('start-chat-btn').classList.remove('hidden'); // Mostra o botão
+  document.getElementById('welcome-message').classList.add('hidden');
+  document.getElementById('question-list').classList.add('hidden');
+  document.getElementById('response').classList.add('hidden');
+});
+
+function loadQuestions() {
+  const questionList = document.getElementById('question-list');
+  questionList.innerHTML = ''; // Limpa perguntas existentes
+  questionsAndAnswers.forEach((item, index) => {
+    const listItem = document.createElement('li');
+    listItem.textContent = `${index + 1}. ${item.question}`;
+    listItem.addEventListener('click', () => showResponse(item.answer));
+    questionList.appendChild(listItem);
+  });
+  questionList.classList.remove('hidden');
+}
+
+  function showResponse(answer) {
+    const response = document.getElementById('response');
+    response.textContent = answer;
+    response.classList.remove('hidden');
+  
+    // Realiza a rolagem para a resposta
+    response.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+//FINAL DA CODIFICAÇÃO DAS FUNÇÕES DO CHAT
+
+//COMEÇO DA CODIFICAÇÃO DO POSISIONAMENTO DO BOTÃO INICAR CHAT PARA POSICIONAR ANTES DO FOOTER
+
+document.addEventListener("DOMContentLoaded", function () {
+  const startChatBtn = document.getElementById('start-chat-btn');
+  const footer = document.querySelector('footer'); // Seleciona o footer da página
+
+  function adjustChatButtonPosition() {
+    const footerRect = footer.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+
+    // Verifica se o footer está visível na viewport
+    if (footerRect.top < windowHeight) {
+      // Reposiciona o botão acima do footer
+      const overlapHeight = windowHeight - footerRect.top;
+      startChatBtn.style.bottom = `${overlapHeight + 20}px`; // Ajuste com 20px de margem
+    } else {
+      // Mantém a posição fixa
+      startChatBtn.style.bottom = '20px';
+    }
+  }
+
+  // Chama a função inicialmente e ao redimensionar/rolar a página
+  adjustChatButtonPosition();
+  window.addEventListener('scroll', adjustChatButtonPosition);
+  window.addEventListener('resize', adjustChatButtonPosition);
+});
+
+//FINAL DO POSISIONAMENTO DO BOTÃO INICAR CHAT PARA POSICIONAR ANTES DO FOOTER
