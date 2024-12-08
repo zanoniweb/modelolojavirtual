@@ -158,26 +158,28 @@ const produtos = [
     <p><strong>Total: R$ ${total.toFixed(2)}</strong></p>
   
       <h3>Dados de Entrega</h3>
-      <label>Nome:</label> <input type="text" id="nome-cliente"><br>
-      <label>Rua:</label> <input type="text" id="rua"><br>
-      <label>Número:</label> <input type="text" id="numero"><br>
-      <label>Bairro:</label> <input type="text" id="bairro"><br>
-      <label>Cidade:</label> <input type="text" id="cidade"><br>
-      <label>CEP:</label> <input type="text" id="cep"><br>
+      <label><b>Nome:</b></label> <input type="text" id="nome-cliente"><br>
+      <label><b>Rua:</b></label> <input type="text" id="rua"><br>
+      <label><b>Número:</b></label> <input type="text" id="numero"><br>
+      <label><b>Bairro:</b></label> <input type="text" id="bairro"><br>
+      <label><b>Cidade:</b></label> <input type="text" id="cidade"><br>
+      <label><b>CEP:</b></label> <input type="text" id="cep"><br>
       <h3>Formas de Pagamento</h3>
 <div>
   <label for="pix">
     <input type="checkbox" id="pix" name="payment-method" value="pix">
-    <p>PIX: 000.000.000-00</p>
+    <p><b>PIX:</b> 000.000.000-00</p>
   </label>
   
   <label for="transfer">
     <input type="checkbox" id="transfer" name="payment-method" value="transfer">
-    <p>Transferência: Banco ?????, Agência ????, Conta ?????-?</p>
+    <p><b>Transferência: </b> Banco ?????, Agência ????, Conta ?????-?</p>
   </label>
 </div>
+      <button onclick="print()">Imprimir</button>
       <button onclick="salvarPDF()">Salvar em PDF</button>
       <button onclick="finalizarCompra()">Finalizar Compra</button>
+       <p id="selected-method"></p>
     `;
   }
   
@@ -208,69 +210,83 @@ const produtos = [
 
   //FINAL DA CODIFICAÇÃO DO CARRINHO
 
+  // INICIAL DA FORMA DE PAGAMENTO ESCOLHIDA 
+  function getSelectedMethod() {
+    const pixCheckbox = document.getElementById('pix');
+    const transferCheckbox = document.getElementById('transfer');
 
-  //COMEÇO DA CODIFICAÇÃO DA SALVA DO CARRINHO
-  
-  async function salvarPDF() {
-    if (carrinho.length === 0) {
-      alert('O carrinho está vazio. Adicione itens antes de salvar.');
-      return;
+    if (pixCheckbox.checked && transferCheckbox.checked) {
+        return "PIX e Transferência";
+    } else if (pixCheckbox.checked) {
+        return "PIX";
+    } else if (transferCheckbox.checked) {
+        return "Transferência";
+    } else {
+        return "Nenhuma forma de pagamento selecionada";
     }
-  
-    const nomeCliente = document.getElementById('nome-cliente').value.trim();
-    const rua = document.getElementById('rua').value.trim();
-    const numero = document.getElementById('numero').value.trim();
-    const bairro = document.getElementById('bairro').value.trim();
-    const cidade = document.getElementById('cidade').value.trim();
-    const cep = document.getElementById('cep').value.trim();
-  
-    if (!nomeCliente || !rua || !numero || !bairro || !cidade || !cep) {
-      alert('Preencha todos os campos de entrega antes de salvar.');
-      return;
-    }
-  
-    // Inicialize o jsPDF
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-  
-    // Adicione informações do cliente
-    doc.setFontSize(12);
-    doc.text(`Cliente: ${nomeCliente}`, 10, 10);
-    doc.text(`Endereço: ${rua}, ${numero}, ${bairro}, ${cidade}, CEP: ${cep}`, 10, 20);
-  
-    // Adicione itens do carrinho
-    doc.text(`Carrinho de Compras:`, 10, 30);
-    let y = 40;
-    carrinho.forEach((item, index) => {
-      doc.text(`${index + 1}. ${item.nome} - R$ ${item.preco.toFixed(2)} x ${item.quantidade}`, 10, y);
-      y += 10;
-    });
-  
-    // Adicione o total
-    const total = carrinho.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
-    doc.text(`Total: R$ ${total.toFixed(2)}`, 10, y + 10);
-  
- // FORMA DE PAGAMENTO ESCOLHIDA --- ESTÁ COM DEFEITO E A BELINHA QUER BRINCAR CONTINUAR AQUI MAIS TARDE URGENTE ESTÁ CAGADO O CÓDIGO FALHA!!!
- const pixCheckbox = document.getElementById('pix');
- const transferCheckbox = document.getElementById('transfer');
- // Elemento para exibir a forma de pagamento escolhida
- const selectedMethodElement = document.getElementById('selected-method');
- // FINAL DA FORMA DE PAGAMENTO ESCOLHIDA
+}
 
+  // FINAL DA FORMA DE PAGAMENTO ESCOLHIDA
 
-    // Salve o PDF
-    doc.save('detalhes_compra.pdf');
-  }
-  
+  //INICIAL DO CÓDIGO PARA FINALIZAR A COMPRA
+
   function finalizarCompra() {
     alert('Compra finalizada! Obrigado pela sua preferência.');
     carrinho = [];
     exibirLoja();
   }
-  
+
+  //FINALIZAÇÃO DO CÓDIGO PARA FINALIZAR A COMPRA
+
+
+//COMEÇO DA CODIFICAÇÃO DA SALVA DO CARRINHO
+async function salvarPDF() {
+  if (carrinho.length === 0) {
+      alert('O carrinho está vazio. Adicione itens antes de salvar.');
+      return;
+  }
+
+  const nomeCliente = document.getElementById('nome-cliente').value.trim();
+  const rua = document.getElementById('rua').value.trim();
+  const numero = document.getElementById('numero').value.trim();
+  const bairro = document.getElementById('bairro').value.trim();
+  const cidade = document.getElementById('cidade').value.trim();
+  const cep = document.getElementById('cep').value.trim();
+
+  if (!nomeCliente || !rua || !numero || !bairro || !cidade || !cep) {
+      alert('Preencha todos os campos de entrega antes de salvar.');
+      return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Informações do cliente
+  doc.setFontSize(12);
+  doc.text(`Cliente: ${nomeCliente}`, 10, 10);
+  doc.text(`Endereço: ${rua}, ${numero}, ${bairro}, ${cidade}, CEP: ${cep}`, 10, 20);
+
+  // Itens do carrinho
+  doc.text(`Carrinho de Compras:`, 10, 30);
+  let y = 40;
+  carrinho.forEach((item, index) => {
+      doc.text(`${index + 1}. ${item.nome} - R$ ${item.preco.toFixed(2)} x ${item.quantidade}`, 10, y);
+      y += 10;
+  });
+
+  // Total
+  const total = carrinho.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
+  doc.text(`Total: R$ ${total.toFixed(2)}`, 10, y + 10);
+
+  // Forma de pagamento
+  const formaPagamento = getSelectedMethod();
+  doc.text(`Forma de Pagamento: ${formaPagamento}`, 10, y + 20);
+
+  // Salvar PDF
+  doc.save(`pedido_${nomeCliente}.pdf`);
+}
+
 //FINAL DA CODIFICAÇÃO DA SALVA DO CARRINHO
-
-
 
 //COMEÇO DA CODIFICAÇÃO DAS FUNÇÕES DO CHAT
 const questionsAndAnswers = [

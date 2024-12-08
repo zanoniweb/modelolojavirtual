@@ -216,3 +216,8 @@ li {
   background: #e1e1e1;
   border-radius: 5px;
 }
+
+@media print { 
+  #noprint { display:none; } 
+  body { background: #fff; }
+} /* script para realizar a ação de imprimir dentro do ambiente HTML */
